@@ -7,256 +7,251 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
+            background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
             padding: 20px;
-            max-width: 850px;
+            max-width: 900px;
             margin: 0 auto;
         }
         .header-container {
-            background: #fff;
+            background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             margin-bottom: 30px;
+            border-top: 6px solid #2ecc71;
         }
-        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
-        .instructions {
-            background-color: #e8f4f8; border-left: 4px solid #3498db;
-            padding: 10px 15px; margin-top: 15px; font-size: 0.95em; border-radius: 0 6px 6px 0;
-        }
-        .section-header {
-            font-size: 1.3em; font-weight: bold; margin: 30px 0 15px 0; color: #2c3e50;
-            padding: 5px 10px; border-bottom: 2px solid #cbd5e1;
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
+        .section-title {
+            background: #34495e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 40px 0 20px 0;
+            font-size: 1.3em;
         }
         .task-card {
-            background: #fff; padding: 20px 25px; margin-bottom: 20px;
-            border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-left: 6px solid #3498db; transition: all 0.3s;
+            background: #fff; padding: 20px; margin-bottom: 15px;
+            border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 6px solid #3498db; transition: 0.3s;
         }
         .task-card.correct-bg { background-color: #d4edda; border-left-color: #28a745; }
         .task-card.incorrect-bg { background-color: #f8d7da; border-left-color: #dc3545; }
-        .task-text { font-size: 1.1em; margin-bottom: 15px; font-weight: 500;}
         
-        /* Renderowanie ułamków */
+        /* Отрисовка дробей */
         .eqContainer { display: inline-flex; align-items: center; gap: 4px; font-family: 'Georgia', serif; font-size: 1.2em;}
-        .fracComp { display: inline-flex; align-items: center;}
-        .intPart { font-size: 1.2em; font-weight: bold; margin-right: 2px;}
-        .fracBox { display: flex; flex-direction: column; align-items: center; line-height: 1; min-width: 25px;}
+        .fracComp { display: inline-flex; align-items: center; gap: 2px;}
+        .intPart { font-size: 1.2em; font-weight: bold;}
+        .fracBox { display: flex; flex-direction: column; align-items: center; line-height: 1; }
         .numPart, .denPart { font-size: 0.9em; padding: 1px;}
-        .fracLine { width: 100%; height: 1.5px; background: #333; margin: 1px 0;}
-        .opBox { font-size: 1.1em; font-weight: bold; margin: 0 8px; color: #555;}
-        
-        /* Inputy */
+        .fracLine { width: 110%; height: 1.5px; background: #333; margin: 1px 0;}
+        .opBox { font-size: 1.2em; font-weight: bold; margin: 0 10px;}
+
+        /* Поля ввода */
         .input-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 15px;}
-        .inputContainerFrac { display: inline-flex; align-items: center; gap: 12px; padding: 10px; }
-        .inputContainerFrac input {
-            border: 2px solid #cbd5e1; text-align: center; border-radius: 8px; 
-            outline: none; transition: border-color 0.2s; background: #fff;
-        }
-        .inputInt { width: 65px; height: 90px; font-size: 1.8em; }
-        .inputFracBox { display: flex; flex-direction: column; align-items: center; width: 80px; }
-        .inputNum, .inputDen { width: 100%; height: 40px; font-size: 1.3em; }
-        .inputLine { width: 100%; height: 3px; background: #2c3e50; margin: 6px 0; }
+        .inputContainerFrac { display: inline-flex; align-items: center; gap: 8px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .inputInt { width: 50px; height: 60px; font-size: 1.5em; text-align: center; border: 2px solid #cbd5e1; border-radius: 6px; }
+        .inputFracBox { display: flex; flex-direction: column; align-items: center; width: 60px; }
+        .inputNum, .inputDen { width: 100%; height: 30px; font-size: 1.1em; text-align: center; border: 2px solid #cbd5e1; border-radius: 4px; }
+        .inputLine { width: 100%; height: 2px; background: #2c3e50; margin: 4px 0; }
 
         button {
-            background-color: #3498db; color: white; border: none; padding: 12px 24px;
-            font-size: 1em; border-radius: 6px; cursor: pointer; font-weight: bold;
+            background-color: #3498db; color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; cursor: pointer; font-weight: bold;
         }
-        button.btn-answer { background-color: #9b59b6; display: none; margin-left: 5px; }
+        button:hover { background-color: #2980b9; }
+        .btn-answer { background-color: #9b59b6; margin-left: 5px;}
+        .feedback { font-weight: bold; margin-left: 10px; }
+        .correct { color: #27ae60; }
+        .incorrect { color: #e74c3c; }
+
+        /* Модалка */
+        #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; text-align: center; width: 90%; max-width: 400px; }
+        .modal-content input { width: 100%; margin-bottom: 15px; padding: 12px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box;}
         
-        .feedback { font-weight: bold; margin-left: 10px; font-size: 1.1em;}
-        .correct { color: #1e8449; }
-        .incorrect { color: #c0392b; }
-
-        /* Modal logowania */
-        #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 400px; width: 90%; }
-        .modal-content input { width: 100%; margin-bottom: 15px; padding: 12px; box-sizing: border-box; font-size: 1.1em; border: 2px solid #e2e8f0; border-radius: 6px; }
-        .modal-content button { width: 100%; font-size: 1.1em; background-color: #27ae60;}
-
         #app-content { display: none; }
-        .finish-container { text-align: center; background: #fff; padding: 30px; border-radius: 12px; margin-top: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .finish-container { text-align: center; margin: 50px 0; padding: 30px; background: white; border-radius: 12px; }
     </style>
 </head>
 <body>
 
-    <div id="start-modal">
-        <div class="modal-content">
-            <h2>Witaj! 👋</h2>
-            <p>Wpisz swoje dane przed rozpoczęciem:</p>
-            <input type="text" id="student-name" placeholder="Imię i Nazwisko">
-            <input type="text" id="student-class" placeholder="Klasa (np. 5A)">
-            <button onclick="startTest()">Rozpocznij test</button>
-            <p id="modal-error" style="color: red; display: none;">Proszę wypełnić oba pola!</p>
-        </div>
+<div id="start-modal">
+    <div class="modal-content">
+        <h2>Witaj na teście! 👋</h2>
+        <p>Wpisz swoje dane, aby zacząć:</p>
+        <input type="text" id="student-name" placeholder="Imię i Nazwisko">
+        <input type="text" id="student-class" placeholder="Klasa (np. 6B)">
+        <button onclick="startTest()" style="width: 100%; padding: 15px; background: #2ecc71;">Rozpocznij Zadania</button>
+    </div>
+</div>
+
+<div id="app-content">
+    <div class="header-container">
+        <h1>Ułamki zwykłe i liczby mieszane</h1>
+        <p>Rozwiąż poniższe zadania. Wynik podawaj w najprostszej postaci (wyłącz całości, skróć ułamek).</p>
     </div>
 
-    <div id="app-content">
-        <div class="header-container">
-            <h1>Zadania: Ułamki i liczby mieszane</h1>
-            <div class="instructions">
-                <b>📌 Instrukcja:</b> Wpisuj wyniki w najprostszej postaci. 
-                Jeśli wynik to liczba całkowita, wpisz ją w pierwszym dużym polu.
-            </div>
-        </div>
+    <div id="tasks-container"></div>
 
-        <div id="tasks-container"></div>
-
-        <div class="finish-container">
-            <h2 id="finish-text">To już wszystkie zadania!</h2>
-            <button style="background-color: #e74c3c; padding: 15px 30px; font-size: 1.2em;" onclick="sendResults()" id="btn-submit">Wyślij wyniki 📧</button>
-        </div>
+    <div class="finish-container">
+        <h2 id="finish-text">To już wszystkie zadania!</h2>
+        <button onclick="sendResults()" id="btn-submit" style="font-size: 1.2em; padding: 20px 40px; background: #e74c3c;">Wyślij wyniki do nauczyciela 📧</button>
     </div>
+</div>
 
-    <script>
-        let studentName = "";
-        let studentClass = "";
-        let taskStatus = {}; 
-        let errorCounts = {};
+<script>
+    let currentStudent = "";
+    let currentClass = "";
+    let resultsData = {};
 
-        const taskData = [
-            // SEKCOJA 1: DODAWANIE
-            { id: "1a", sec: "1. Dodawanie prostych ułamków i liczb mieszanych", eq: "$\\frac{3}{10} + \\frac{6}{10}$", can: {i: 0, n: 9, d: 10} },
-            { id: "1b", sec: "", eq: "$\\frac{8}{13} + \\frac{9}{13}$", can: {i: 1, n: 4, d: 13} },
-            { id: "1c", sec: "", eq: "$4\\frac{2}{7} + 2\\frac{3}{7}$", can: {i: 6, n: 5, d: 7} },
-            { id: "1d", sec: "", eq: "$1\\frac{5}{8} + 3\\frac{7}{8}$", can: {i: 5, n: 4, d: 8} },
-            { id: "1e", sec: "", eq: "$10\\frac{11}{12} + 5\\frac{5}{12}$", can: {i: 16, n: 4, d: 12} },
+    const tasksData = [
+        // 1. Dodawanie
+        { section: "1. Dodawanie ułamków i liczb mieszanych", id: "1a", eq: "$\\frac{3}{10} + \\frac{6}{10}$", can: {int: 0, num: 9, den: 10} },
+        { section: "", id: "1b", eq: "$\\frac{8}{13} + \\frac{9}{13}$", can: {int: 1, num: 4, den: 13} },
+        { section: "", id: "1c", eq: "$4\\frac{2}{7} + 2\\frac{3}{7}$", can: {int: 6, num: 5, den: 7} },
+        { section: "", id: "1d", eq: "$1\\frac{5}{8} + 3\\frac{7}{8}$", can: {int: 5, num: 1, den: 2} },
+        { section: "", id: "1e", eq: "$10\\frac{11}{12} + 5\\frac{5}{12}$", can: {int: 16, num: 1, den: 3} },
 
-            // SEKCJA 2: SPRYTNE DODAWANIE
-            { id: "2a", sec: "2. Sprytne dodawanie (Grupowanie składników)", eq: "$3\\frac{2}{9} + 1\\frac{4}{5} + \\frac{7}{9}$", can: {i: 5, n: 4, d: 5} },
-            { id: "2b", sec: "", eq: "$5\\frac{3}{7} + 2\\frac{1}{4} + \\frac{4}{7} + 1\\frac{3}{4}$", can: {i: 10, n: 0, d: 0} },
-            { id: "2c", sec: "", eq: "$\\frac{5}{11} + 4\\frac{3}{8} + 1\\frac{6}{11} + 2\\frac{5}{8}$", can: {i: 9, n: 0, d: 0} },
-            { id: "2d", sec: "", eq: "$8\\frac{1}{6} + 3\\frac{7}{10} + 1\\frac{5}{6} + \\frac{3}{10}$", can: {i: 14, n: 0, d: 0} },
-            { id: "2e", sec: "", eq: "$2\\frac{4}{15} + 7\\frac{1}{3} + 1\\frac{11}{15} + 4\\frac{2}{3}$", can: {i: 16, n: 0, d: 0} },
+        // 2. Sprytne dodawanie
+        { section: "2. Sprytne dodawanie (Grupowanie)", id: "2a", eq: "$3\\frac{2}{9} + 1\\frac{4}{5} + \\frac{7}{9}$", can: {int: 5, num: 4, den: 5} },
+        { section: "", id: "2b", eq: "$5\\frac{3}{7} + 2\\frac{1}{4} + \\frac{4}{7} + 1\\frac{3}{4}$", can: {int: 10, num: 0, den: 0} },
+        { section: "", id: "2c", eq: "$\\frac{5}{11} + 4\\frac{3}{8} + 1\\frac{6}{11} + 2\\frac{5}{8}$", can: {int: 9, num: 0, den: 0} },
+        { section: "", id: "2d", eq: "$8\\frac{1}{6} + 3\\frac{7}{10} + 1\\frac{5}{6} + \\frac{3}{10}$", can: {int: 14, num: 0, den: 0} },
+        { section: "", id: "2e", eq: "$2\\frac{4}{15} + 7\\frac{1}{3} + 1\\frac{11}{15} + 4\\frac{2}{3}$", can: {int: 16, num: 0, den: 0} },
 
-            // SEKCJA 3: ODEJMOWANIE OD CAŁOŚCI
-            { id: "3a", sec: "3. Odejmowanie od liczby całkowitej", eq: "$1 - \\frac{5}{9}$", can: {i: 0, n: 4, d: 9} },
-            { id: "3b", sec: "", eq: "$2 - \\frac{3}{4}$", can: {i: 1, n: 1, d: 4} },
-            { id: "3c", sec: "", eq: "$5 - \\frac{2}{7}$", can: {i: 4, n: 5, d: 7} },
-            { id: "3d", sec: "", eq: "$12 - \\frac{7}{10}$", can: {i: 11, n: 3, d: 10} },
-            { id: "3e", sec: "", eq: "$20 - \\frac{11}{15}$", can: {i: 19, n: 4, d: 15} },
+        // 3. Odejmowanie od całości
+        { section: "3. Odejmowanie od liczby całkowitej", id: "3a", eq: "$1 - \\frac{5}{9}$", can: {int: 0, num: 4, den: 9} },
+        { section: "", id: "3b", eq: "$2 - \\frac{3}{4}$", can: {int: 1, num: 1, den: 4} },
+        { section: "", id: "3c", eq: "$5 - \\frac{2}{7}$", can: {int: 4, num: 5, den: 7} },
+        { section: "", id: "3d", eq: "$12 - \\frac{7}{10}$", can: {int: 11, num: 3, den: 10} },
+        { section: "", id: "3e", eq: "$20 - \\frac{11}{15}$", can: {int: 19, num: 4, den: 15} },
 
-            // SEKCJA 4: ODEJMOWANIE MIESZANE
-            { id: "4a", sec: "4. Odejmowanie ułamków i liczb mieszanych", eq: "$\\frac{24}{25} - \\frac{9}{25}$", can: {i: 0, n: 15, d: 25} },
-            { id: "4b", sec: "", eq: "$6\\frac{8}{11} - 2\\frac{3}{11}$", can: {i: 4, n: 5, d: 11} },
-            { id: "4c", sec: "", eq: "$15\\frac{9}{10} - 7\\frac{9}{10}$", can: {i: 8, n: 0, d: 0} },
-            { id: "4d", sec: "", eq: "$8\\frac{13}{20} - 5$", can: {i: 3, n: 13, d: 20} },
-            { id: "4e", sec: "", eq: "$10\\frac{5}{6} - 4\\frac{1}{6}$", can: {i: 6, n: 4, d: 6} },
+        // 4. Odejmowanie ułamków
+        { section: "4. Odejmowanie ułamków i liczb mieszanych", id: "4a", eq: "$\\frac{24}{25} - \\frac{9}{25}$", can: {int: 0, num: 3, den: 5} },
+        { section: "", id: "4b", eq: "$6\\frac{8}{11} - 2\\frac{3}{11}$", can: {int: 4, num: 5, den: 11} },
+        { section: "", id: "4c", eq: "$15\\frac{9}{10} - 7\\frac{9}{10}$", can: {int: 8, num: 0, den: 0} },
+        { section: "", id: "4d", eq: "$8\\frac{13}{20} - 5$", can: {int: 3, num: 13, den: 20} },
+        { section: "", id: "4e", eq: "$10\\frac{5}{6} - 4\\frac{1}{6}$", can: {int: 6, num: 2, den: 3} },
 
-            // SEKCJA 5: WYZWANIA
-            { id: "5a", sec: "5. Wyzwania (Mieszane operacje)", eq: "$1 - \\frac{1}{2} - \\frac{1}{2}$", can: {i: 0, n: 0, d: 0} },
-            { id: "5b", sec: "", eq: "$3\\frac{4}{7} + 2\\frac{3}{7} - 1$", can: {i: 5, n: 0, d: 0} },
-            { id: "5c", sec: "", eq: "$10 - 2\\frac{1}{5}$", can: {i: 7, n: 4, d: 5} },
-            { id: "5d", sec: "", eq: "$(4\\frac{1}{8} + 2\\frac{7}{8}) - 3\\frac{5}{8}$", can: {i: 3, n: 3, d: 8} },
-            { id: "5e", sec: "", eq: "$1\\frac{2}{3} + 1\\frac{2}{3} + 1\\frac{2}{3}$", can: {i: 5, n: 0, d: 0} }
-        ];
+        // 5. Wyzwania
+        { section: "5. Wyzwania (Mieszane operacje)", id: "5a", eq: "$1 - \\frac{1}{2} - \\frac{1}{2}$", can: {int: 0, num: 0, den: 0} },
+        { section: "", id: "5b", eq: "$3\\frac{4}{7} + 2\\frac{3}{7} - 1$", can: {int: 5, num: 0, den: 0} },
+        { section: "", id: "5c", eq: "$10 - 2\\frac{1}{5}$", can: {int: 7, num: 4, den: 5} },
+        { section: "", id: "5d", eq: "$(4\\frac{1}{8} + 2\\frac{7}{8}) - 3\\frac{5}{8}$", can: {int: 3, num: 3, den: 8} },
+        { section: "", id: "5e", eq: "$1\\frac{2}{3} + 1\\frac{2}{3} + 1\\frac{2}{3}$", can: {int: 5, num: 0, den: 0} }
+    ];
 
-        function startTest() {
-            const name = document.getElementById("student-name").value.trim();
-            const cls = document.getElementById("student-class").value.trim();
-            if(name === "" || cls === "") { document.getElementById("modal-error").style.display = "block"; return; }
-            studentName = name; studentClass = cls;
-            document.getElementById("start-modal").style.display = "none";
-            document.getElementById("app-content").style.display = "block";
-            renderTasks();
-        }
+    function startTest() {
+        currentStudent = document.getElementById("student-name").value;
+        currentClass = document.getElementById("student-class").value;
+        if (!currentStudent || !currentClass) { alert("Wpisz imię, nazwisko i klasę!"); return; }
+        document.getElementById("start-modal").style.display = "none";
+        document.getElementById("app-content").style.display = "block";
+        renderTasks();
+    }
 
-        function renderFraction(latex) {
-            let text = latex.replace(/\$/g, '').replace(/\+/g, '<span class="opBox">+</span>').replace(/\-/g, '<span class="opBox">-</span>').replace(/\(/g, '<span class="opBox">(</span>').replace(/\)/g, '<span class="opBox">)</span>');
-            const pattern = /((\d+)\s*)?\\frac\{(\d+)\}\{(\d+)\}/g;
-            return text.replace(pattern, (m, p1, p2, p3, p4) => {
-                let int = p2 ? `<div class="intPart">${p2}</div>` : '';
-                return `<div class="fracComp">${int}<div class="fracBox"><div class="numPart">${p3}</div><div class="fracLine"></div><div class="denPart">${p4}</div></div></div>`;
-            });
-        }
+    function renderFraction(latex) {
+        let text = latex.replace(/\$/g, '').replace(/([+\-()=])/g, '<div class="opBox">$1</div>');
+        const pattern = /((\d+)\s*)?\\frac\{(\d+)\}\{(\d+)\}/g;
+        text = text.replace(pattern, (m, p1, p2, p3, p4) => {
+            return `<div class="fracComp">
+                ${p2 ? `<div class="intPart">${p2}</div>` : ''}
+                <div class="fracBox">
+                    <div class="numPart">${p3}</div>
+                    <div class="fracLine"></div>
+                    <div class="denPart">${p4}</div>
+                </div>
+            </div>`;
+        });
+        return `<div class="eqContainer">${text}</div>`;
+    }
 
-        function renderTasks() {
-            const container = document.getElementById("tasks-container");
-            taskData.forEach(task => {
-                if(task.sec) container.innerHTML += `<div class="section-header">${task.sec}</div>`;
-                container.innerHTML += `
-                    <div class="task-card" id="card_${task.id}">
-                        <div class="task-text"><div class="eqContainer">Zadanie ${task.id}) ${renderFraction(task.eq)} <span class="opBox">=</span></div></div>
-                        <div class="input-group">
-                            <div class="inputContainerFrac">
-                                <input type="number" class="inputInt" id="in_${task.id}_i" placeholder="?">
-                                <div class="inputFracBox">
-                                    <input type="number" class="inputNum" id="in_${task.id}_n" placeholder="L">
-                                    <div class="inputLine"></div>
-                                    <input type="number" class="inputDen" id="in_${task.id}_d" placeholder="M">
-                                </div>
-                            </div>
-                            <button onclick="checkAnswer('${task.id}')">Sprawdź</button>
-                            <button class="btn-answer" id="btn_ans_${task.id}" onclick="showAnswer('${task.id}')">Pokaż wynik</button>
-                            <span id="fee_${task.id}" class="feedback"></span>
-                        </div>
-                    </div>
-                `;
-                taskStatus[task.id] = "Brak";
-                errorCounts[task.id] = 0;
-            });
-        }
-
-        function checkAnswer(id) {
-            const task = taskData.find(t => t.id === id);
-            const userI = parseInt(document.getElementById(`in_${id}_i`).value) || 0;
-            const userN = parseInt(document.getElementById(`in_${id}_n`).value) || 0;
-            const userD = parseInt(document.getElementById(`in_${id}_d`).value) || 0;
-
-            const isCorrect = (userI === task.can.i && userN === task.can.n && (task.can.n === 0 || userD === task.can.d));
-            const fee = document.getElementById(`fee_${id}`);
-            const card = document.getElementById(`card_${id}`);
-
-            card.classList.remove("correct-bg", "incorrect-bg");
-
-            if(isCorrect) {
-                fee.textContent = "Dobrze!"; fee.className = "feedback correct";
-                card.classList.add("correct-bg");
-                if(taskStatus[id] !== "Podgląd") taskStatus[id] = "Samodzielnie";
-                document.getElementById(`btn_ans_${id}`).style.display = "none";
-            } else {
-                fee.textContent = "Błąd, spróbuj ponownie."; fee.className = "feedback incorrect";
-                card.classList.add("incorrect-bg");
-                errorCounts[id]++;
-                if(errorCounts[id] >= 2) document.getElementById(`btn_ans_${id}`).style.display = "inline-block";
+    function renderTasks() {
+        const container = document.getElementById("tasks-container");
+        tasksData.forEach(task => {
+            if (task.section) {
+                container.innerHTML += `<div class="section-title">${task.section}</div>`;
             }
+            container.innerHTML += `
+                <div class="task-card" id="card_${task.id}">
+                    <div style="margin-bottom:10px;"><strong>Zadanie ${task.id}:</strong></div>
+                    ${renderFraction(task.eq)}
+                    <div class="input-group">
+                        <div class="inputContainerFrac">
+                            <input type="number" class="inputInt" id="in_${task.id}_i" placeholder="0">
+                            <div class="inputFracBox">
+                                <input type="number" class="inputNum" id="in_${task.id}_n" placeholder="L">
+                                <div class="inputLine"></div>
+                                <input type="number" class="inputDen" id="in_${task.id}_d" placeholder="M">
+                            </div>
+                        </div>
+                        <button onclick="check('${task.id}')">Sprawdź</button>
+                        <button class="btn-answer" id="ans_${task.id}" style="display:none" onclick="showAns('${task.id}')">Pokaż wynik</button>
+                        <span id="fb_${task.id}" class="feedback"></span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function check(id) {
+        const task = tasksData.find(t => t.id === id);
+        const userI = parseInt(document.getElementById(`in_${id}_i`).value) || 0;
+        const userN = parseInt(document.getElementById(`in_${id}_n`).value) || 0;
+        const userD = parseInt(document.getElementById(`in_${id}_d`).value) || 0;
+        
+        const card = document.getElementById(`card_${id}`);
+        const fb = document.getElementById(`fb_${id}`);
+        
+        let isCorrect = (userI === task.can.int && userN === task.can.num);
+        if (task.can.num !== 0) isCorrect = isCorrect && (userD === task.can.den);
+
+        card.classList.remove("correct-bg", "incorrect-bg");
+        if (isCorrect) {
+            fb.innerHTML = "Dobrze! ✅"; fb.className = "feedback correct";
+            card.classList.add("correct-bg");
+            resultsData[id] = "OK";
+        } else {
+            fb.innerHTML = "Spróbuj jeszcze raz! ❌"; fb.className = "feedback incorrect";
+            card.classList.add("incorrect-bg");
+            document.getElementById(`ans_${id}`).style.display = "inline";
         }
+    }
 
-        function showAnswer(id) {
-            const task = taskData.find(t => t.id === id);
-            document.getElementById(`in_${id}_i`).value = task.can.i;
-            document.getElementById(`in_${id}_n`).value = task.can.n;
-            document.getElementById(`in_${id}_d`).value = task.can.d || "";
-            taskStatus[id] = "Podgląd";
-            checkAnswer(id);
-        }
+    function showAns(id) {
+        const task = tasksData.find(t => t.id === id);
+        document.getElementById(`in_${id}_i`).value = task.can.int;
+        document.getElementById(`in_${id}_n`).value = task.can.num || "";
+        document.getElementById(`in_${id}_d`).value = task.can.num ? task.can.den : "";
+        resultsData[id] = "Podgląd";
+        check(id);
+    }
 
-        function sendResults() {
-            const btn = document.getElementById("btn-submit");
-            btn.textContent = "Wysyłanie..."; btn.disabled = true;
+    function sendResults() {
+        const btn = document.getElementById("btn-submit");
+        btn.disabled = true; btn.innerText = "Wysyłanie...";
 
-            let report = `Uczeń: ${studentName}, Klasa: ${studentClass}\n\n`;
-            taskData.forEach(t => {
-                report += `Zadanie ${t.id}: ${taskStatus[t.id]} (Błędy: ${errorCounts[t.id]})\n`;
-            });
+        let report = `Uczeń: ${currentStudent}, Klasa: ${currentClass}\n\n`;
+        tasksData.forEach(t => {
+            report += `Zadanie ${t.id}: ${resultsData[t.id] || "Brak"}\n`;
+        });
 
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    access_key: "99356b6c-ab77-4ea0-a3cb-99560d40fafa",
-                    subject: `UŁAMKI WYNIK: ${studentName} (${studentClass})`,
-                    message: report
-                })
-            }).then(resp => {
-                if(resp.status === 200) {
-                    document.getElementById("finish-text").textContent = "Wyniki zostały wysłane! Możesz zamknąć stronę.";
-                    btn.style.display = "none";
-                }
-            });
-        }
-    </script>
+        fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                access_key: "99356b6c-ab77-4ea0-a3cb-99560d40fafa",
+                subject: `Wyniki ułamki: ${currentStudent}`,
+                message: report
+            })
+        }).then(() => {
+            document.getElementById("finish-text").innerText = "Wysłano pomyślnie! Dziękuję.";
+            btn.style.display = "none";
+        });
+    }
+</script>
+
 </body>
 </html>
