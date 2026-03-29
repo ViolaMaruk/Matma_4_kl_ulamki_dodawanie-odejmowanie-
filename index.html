@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trening Ułamkowy: Zestaw Ćwiczeń</title>
+    <title>Zestaw ćwiczeń: Ułamki zwykłe i liczby mieszane</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-image: url('background2.jpg');
+            background-size: cover; 
+            background-position: center;
+            background-attachment: fixed; 
+            background-repeat: no-repeat;
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -31,11 +35,6 @@
             padding: 10px 15px; margin-top: 15px; font-size: 0.95em; border-radius: 0 6px 6px 0;
         }
         
-        .section-header {
-            background: #34495e; color: white; padding: 10px 20px;
-            border-radius: 8px; margin: 30px 0 15px 0; font-size: 1.2em;
-        }
-
         .task-card {
             background: #fff; padding: 20px 25px; margin-bottom: 20px;
             border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -45,7 +44,6 @@
         .task-card.incorrect-bg { background-color: #f8d7da; border-left-color: #dc3545; }
         .task-text { font-size: 1.2em; margin-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;}
         
-        /* СТИЛИ ДЛЯ ИДЕАЛЬНОЙ ОТРИСОВКИ ДРОБЕЙ */
         .eqContainer { display: inline-flex; align-items: center; gap: 4px; font-family: 'Georgia', serif; font-size: 1.1em;}
         .fracComp { display: inline-flex; align-items: center;}
         .fracComp.mixed { gap: 3px; }
@@ -55,16 +53,19 @@
         .fracLine { width: 100%; height: 1.5px; background: #333; margin: 1px 0;}
         .opBox { font-size: 1.2em; font-weight: bold; margin: 0 8px; color: #555;}
         
-        /* ОКНА ВВОДА */
         .input-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 15px;}
-        .inputContainerFrac { display: inline-flex; align-items: center; gap: 12px; padding: 10px; }
+        .inputContainerFrac { display: inline-flex; align-items: center; gap: 12px; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 10px; }
         .inputContainerFrac input {
             border: 2px solid #cbd5e1; text-align: center; border-radius: 8px; 
-            outline: none; transition: border-color 0.2s; background: #fff; color: #2c3e50;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #fff; color: #2c3e50;
+            box-sizing: border-box;
         }
-        .inputInt { width: 65px; height: 100px; font-size: 1.8em; }
+        .inputContainerFrac input:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
+        .inputInt { width: 65px; height: 100px; font-size: 1.8em; font-weight: normal; color: #a0aec0;}
+        .inputInt:not(:placeholder-shown) { font-weight: bold; color: #2c3e50; }
         .inputFracBox { display: flex; flex-direction: column; align-items: center; width: 85px; }
-        .inputNum, .inputDen { width: 100%; height: 45px; font-size: 1.3em; }
+        .inputNum, .inputDen { width: 100%; height: 45px; font-size: 1.3em; color: #a0aec0; }
+        .inputNum:not(:placeholder-shown), .inputDen:not(:placeholder-shown) { font-weight: bold; color: #2c3e50; }
         .inputLine { width: 110%; height: 3px; background: #2c3e50; margin: 8px 0; border-radius: 2px; }
 
         button {
@@ -72,18 +73,26 @@
             font-size: 1.05em; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold;
         }
         button:hover { background-color: #2980b9; }
-        button.btn-answer { background-color: #9b59b6; margin-left: 10px;}
+        button.btn-hint { background-color: #f39c12; }
+        button.btn-hint:hover { background-color: #d68910; }
+        button.btn-answer { background-color: #9b59b6; }
+        button.btn-answer:hover { background-color: #8e44ad; }
         
         .feedback { font-weight: bold; margin-left: 10px; font-size: 1.1em;}
         .correct { color: #1e8449; }
         .incorrect { color: #c0392b; }
+        .hint-text { display: none; margin-top: 15px; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; font-style: normal; color: #856404; border-radius: 0 6px 6px 0; font-size: 1.05em;}
 
         #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 400px; width: 90%; }
-        .modal-content input { width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; text-align: center; border: 2px solid #e2e8f0; border-radius: 6px; }
+        .modal-content { background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content input { width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; text-align: center; font-size: 1.1em; border: 2px solid #e2e8f0; border-radius: 6px; }
+        .modal-content button { width: 100%; font-size: 1.1em; padding: 12px; background-color: #27ae60;}
+        .modal-content button:hover { background-color: #2ecc71;}
         
         #app-content { display: none; }
-        .finish-container { text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 12px; margin-top: 30px; }
+        .finish-container { text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 12px; margin-top: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .btn-finish { background-color: #e74c3c; font-size: 1.2em; padding: 15px 30px; }
+        .btn-finish:hover { background-color: #c0392b; }
     </style>
 </head>
 <body>
@@ -101,10 +110,13 @@
 
     <div id="app-content">
         <div class="header-container">
-            <h1>Zestaw ćwiczeń: Ułamki</h1>
-            <p class="description">Ułamki zwykłe i liczby mieszane - dodawanie i odejmowanie.</p>
+            <h1>Ułamki zwykłe i liczby mieszane</h1>
+            <p class="description">Zestaw ćwiczeń: Dodawanie, odejmowanie i wyłączanie całości.</p>
             <div class="instructions">
-                <b>📌 Wskazówka:</b> Wyniki podawaj w najprostszej postaci (wyłączaj całości i skracaj ułamki). Jeśli wynik to liczba całkowita, wypełnij tylko lewe pole.
+                <b>📌 Wskazówki:</b><br>
+                1. Wynik podawaj w <b>najprostszej postaci</b> (wyłącz całości, jeśli to możliwe).<br>
+                2. Jeśli wynik to <b>całość</b>, wpisz ją w duże pole po lewej.<br>
+                3. Jeśli wynik to <b>ułamek</b>, wpisz licznik i mianownik.
             </div>
         </div>
 
@@ -112,51 +124,15 @@
 
         <div class="finish-container">
             <h2 id="finish-text">Skończyłeś? Wyślij wyniki do nauczyciela!</h2>
-            <button class="btn-finish" id="btn-submit" onclick="sendResults()" style="background-color: #e74c3c; padding: 15px 30px; font-size: 1.2em;">Wyślij wyniki 📧</button>
+            <button class="btn-finish" id="btn-submit" onclick="sendResults()">Wyślij wyniki 📧</button>
         </div>
     </div>
 
     <script>
         let currentStudent = "";
         let currentClass = "";
-        let resultsData = {};
-
-        const tasksData = [
-            // 1. Dodawanie
-            { group: "1. Dodawanie prostych ułamków i liczb mieszanych", id: "1a", eq: "$\\frac{3}{10} + \\frac{6}{10}$", can: {int: 0, num: 9, den: 10} },
-            { id: "1b", eq: "$\\frac{8}{13} + \\frac{9}{13}$", can: {int: 1, num: 4, den: 13} },
-            { id: "1c", eq: "$4\\frac{2}{7} + 2\\frac{3}{7}$", can: {int: 6, num: 5, den: 7} },
-            { id: "1d", eq: "$1\\frac{5}{8} + 3\\frac{7}{8}$", can: {int: 5, num: 1, den: 2} },
-            { id: "1e", eq: "$10\\frac{11}{12} + 5\\frac{5}{12}$", can: {int: 16, num: 1, den: 3} },
-            
-            // 2. Sprytne dodawanie
-            { group: "2. Sprytne dodawanie (Grupowanie składników)", id: "2a", eq: "$3\\frac{2}{9} + 1\\frac{4}{5} + \\frac{7}{9}$", can: {int: 5, num: 4, den: 5} },
-            { id: "2b", eq: "$5\\frac{3}{7} + 2\\frac{1}{4} + \\frac{4}{7} + 1\\frac{3}{4}$", can: {int: 10, num: 0, den: 0} },
-            { id: "2c", eq: "$\\frac{5}{11} + 4\\frac{3}{8} + 1\\frac{6}{11} + 2\\frac{5}{8}$", can: {int: 9, num: 0, den: 0} },
-            { id: "2d", eq: "$8\\frac{1}{6} + 3\\frac{7}{10} + 1\\frac{5}{6} + \\frac{3}{10}$", can: {int: 14, num: 0, den: 0} },
-            { id: "2e", eq: "$2\\frac{4}{15} + 7\\frac{1}{3} + 1\\frac{11}{15} + 4\\frac{2}{3}$", can: {int: 16, num: 0, den: 0} },
-
-            // 3. Odejmowanie od całkowitej
-            { group: "3. Odejmowanie od liczby całkowitej", id: "3a", eq: "$1 - \\frac{5}{9}$", can: {int: 0, num: 4, den: 9} },
-            { id: "3b", eq: "$2 - \\frac{3}{4}$", can: {int: 1, num: 1, den: 4} },
-            { id: "3c", eq: "$5 - \\frac{2}{7}$", can: {int: 4, num: 5, den: 7} },
-            { id: "3d", eq: "$12 - \\frac{7}{10}$", can: {int: 11, num: 3, den: 10} },
-            { id: "3e", eq: "$20 - \\frac{11}{15}$", can: {int: 19, num: 4, den: 15} },
-
-            // 4. Odejmowanie ułamków
-            { group: "4. Odejmowanie ułamków i liczb mieszanych", id: "4a", eq: "$\\frac{24}{25} - \\frac{9}{25}$", can: {int: 0, num: 3, den: 5} },
-            { id: "4b", eq: "$6\\frac{8}{11} - 2\\frac{3}{11}$", can: {int: 4, num: 5, den: 11} },
-            { id: "4c", eq: "$15\\frac{9}{10} - 7\\frac{9}{10}$", can: {int: 8, num: 0, den: 0} },
-            { id: "4d", eq: "$8\\frac{13}{20} - 5$", can: {int: 3, num: 13, den: 20} },
-            { id: "4e", eq: "$10\\frac{5}{6} - 4\\frac{1}{6}$", can: {int: 6, num: 2, den: 3} },
-
-            // 5. Wyzwania
-            { group: "5. Wyzwania (Mieszane operacje)", id: "5a", eq: "$1 - \\frac{1}{2} - \\frac{1}{2}$", can: {int: 0, num: 0, den: 0} },
-            { id: "5b", eq: "$3\\frac{4}{7} + 2\\frac{3}{7} - 1$", can: {int: 5, num: 0, den: 0} },
-            { id: "5c", eq: "$10 - 2\\frac{1}{5}$", can: {int: 7, num: 4, den: 5} },
-            { id: "5d", eq: "$(4\\frac{1}{8} + 2\\frac{7}{8}) - 3\\frac{5}{8}$", can: {int: 3, num: 3, den: 8} },
-            { id: "5e", eq: "$1\\frac{2}{3} + 1\\frac{2}{3} + 1\\frac{2}{3}$", can: {int: 5, num: 0, den: 0} }
-        ];
+        let resultsData = {}; 
+        let userAttemptsStructures = {}; 
 
         function startTest() {
             const nameInput = document.getElementById("student-name").value.trim();
@@ -167,15 +143,18 @@
             currentStudent = nameInput; currentClass = classInput;
             document.getElementById("start-modal").style.display = "none";
             document.getElementById("app-content").style.display = "block";
-            renderTasks();
         }
 
-        function renderFractionHTML(latex) {
-            let text = latex.replace(/\$/g, '').replace(/([+\-=()])/g, '<div class="opBox">$1</div>');
+        function renderFractionEquationHTML(latex) {
+            if (!latex) return '';
+            let text = latex.replace(/\$/g, '');
+            text = text.replace(/([+\-=()])/g, '<div class="opBox">$1</div>');
+
             const pattern = /((\d+)\s*)?\\frac\{(\d+)\}\{(\d+)\}/g;
             text = text.replace(pattern, (match, p1, p2, p3, p4) => {
                 let intPart = p2 ? p2.trim() : '';
-                return `<div class="fracComp ${intPart ? 'mixed' : ''}">
+                let mixedClass = intPart ? 'mixed' : '';
+                return `<div class="fracComp ${mixedClass}">
                             ${intPart ? `<div class="intPart">${intPart}</div>` : ''}
                             <div class="fracBox">
                                 <div class="numPart">${p3}</div>
@@ -187,86 +166,202 @@
             return `<div class="eqContainer">${text}</div>`;
         }
 
-        function renderTasks() {
-            const container = document.getElementById("tasks-container");
-            tasksData.forEach((task) => {
-                if(task.group) {
-                    container.innerHTML += `<div class="section-header">${task.group}</div>`;
-                }
-                container.innerHTML += `
-                    <div class="task-card" id="card_${task.id}">
-                        <div class="task-text"><strong>Zadanie ${task.id}.</strong></div>
-                        ${renderFractionHTML(task.eq)}
-                        <div class="input-group">
-                            <div class="inputContainerFrac">
-                                <input type="text" class="inputInt" id="in_${task.id}_i" placeholder="0">
-                                <div class="inputFracBox">
-                                    <input type="text" class="inputNum" id="in_${task.id}_n" placeholder="L">
-                                    <div class="inputLine"></div>
-                                    <input type="text" class="inputDen" id="in_${task.id}_d" placeholder="M">
-                                </div>
-                            </div>
-                            <button onclick="checkAnswer('${task.id}')">Sprawdź</button>
-                            <button class="btn-answer" id="ans_btn_${task.id}" style="display:none" onclick="showAnswer('${task.id}')">Pokaż wynik</button>
-                            <span id="fb_${task.id}" class="feedback"></span>
+        const tasksData = [
+            // 1. Dodawanie
+            { id: "1a", type: "frac", text: "Oblicz sumę:", eq: "$\\frac{3}{10} + \\frac{6}{10} =$", can: {int: 0, num: 9, den: 10}, hint: "Dodaj tylko liczniki. Mianownik pozostaje bez zmian." },
+            { id: "1b", type: "frac", text: "Oblicz sumę (wyłącz całości):", eq: "$\\frac{8}{13} + \\frac{9}{13} =$", can: {int: 1, num: 4, den: 13}, hint: "Suma to 17/13. Ile trzynastek mieści się w 17?" },
+            { id: "1c", type: "frac", text: "Oblicz sumę:", eq: "$4\\frac{2}{7} + 2\\frac{3}{7} =$", can: {int: 6, num: 5, den: 7}, hint: "Dodaj całości do całości, a ułamki do ułamków." },
+            { id: "1d", type: "frac", text: "Oblicz sumę (wyłącz całości):", eq: "$1\\frac{5}{8} + 3\\frac{7}{8} =$", can: {int: 5, num: 4, den: 8}, altCan: {int: 5, num: 1, den: 2}, hint: "Dodaj: 4 i 12/8. Następnie z 12/8 wyłącz całość." },
+            { id: "1e", type: "frac", text: "Oblicz sumę (wyłącz całości):", eq: "$10\\frac{11}{12} + 5\\frac{5}{12} =$", can: {int: 16, num: 4, den: 12}, altCan: {int: 16, num: 1, den: 3}, hint: "Dodaj: 15 i 16/12. Wyłącz całości." },
+
+            // 2. Sprytne dodawanie
+            { id: "2a", type: "frac", text: "Sprytne dodawanie (pogrupuj ułamki o mianowniku 9):", eq: "$3\\frac{2}{9} + 1\\frac{4}{5} + \\frac{7}{9} =$", can: {int: 5, num: 4, den: 5}, hint: "3 2/9 + 7/9 = 4. Potem dodaj 1 4/5." },
+            { id: "2b", type: "frac", text: "Sprytne dodawanie (pogrupuj mianowniki 7 oraz 4):", eq: "$5\\frac{3}{7} + 2\\frac{1}{4} + \\frac{4}{7} + 1\\frac{3}{4} =$", can: {int: 10, num: 0, den: 0}, hint: "(5 3/7 + 4/7) + (2 1/4 + 1 3/4) = 6 + 4 = 10" },
+            { id: "2c", type: "frac", text: "Sprytne dodawanie:", eq: "$\\frac{5}{11} + 4\\frac{3}{8} + 1\\frac{6}{11} + 2\\frac{5}{8} =$", can: {int: 9, num: 0, den: 0}, hint: "(5/11 + 1 6/11) + (4 3/8 + 2 5/8) = 2 + 7 = 9" },
+            { id: "2d", type: "frac", text: "Sprytne dodawanie:", eq: "$8\\frac{1}{6} + 3\\frac{7}{10} + 1\\frac{5}{6} + \\frac{3}{10} =$", can: {int: 14, num: 0, den: 0}, hint: "Połącz 1/6 z 5/6 oraz 7/10 z 3/10." },
+            { id: "2e", type: "frac", text: "Sprytne dodawanie:", eq: "$2\\frac{4}{15} + 7\\frac{1}{3} + 1\\frac{11}{15} + 4\\frac{2}{3} =$", can: {int: 16, num: 0, den: 0}, hint: "Połącz mianowniki 15 oraz mianowniki 3." },
+
+            // 3. Odejmowanie od całości
+            { id: "3a", type: "frac", text: "Oblicz różnicę:", eq: "$1 - \\frac{5}{9} =$", can: {int: 0, num: 4, den: 9}, hint: "Zamień 1 na 9/9." },
+            { id: "3b", type: "frac", text: "Oblicz różnicę:", eq: "$2 - \\frac{3}{4} =$", can: {int: 1, num: 1, den: 4}, hint: "Zamień 2 na 1 i 4/4." },
+            { id: "3c", type: "frac", text: "Oblicz różnicę:", eq: "$5 - \\frac{2}{7} =$", can: {int: 4, num: 5, den: 7}, hint: "Zamień 5 na 4 i 7/7." },
+            { id: "3d", type: "frac", text: "Oblicz różnicę:", eq: "$12 - \\frac{7}{10} =$", can: {int: 11, num: 3, den: 10}, hint: "Zamień 12 na 11 i 10/10." },
+            { id: "3e", type: "frac", text: "Oblicz różnicę:", eq: "$20 - \\frac{11}{15} =$", can: {int: 19, num: 4, den: 15}, hint: "Zamień 20 na 19 i 15/15." },
+
+            // 4. Odejmowanie ułamków
+            { id: "4a", type: "frac", text: "Oblicz różnicę:", eq: "$\\frac{24}{25} - \\frac{9}{25} =$", can: {int: 0, num: 15, den: 25}, altCan: {int: 0, num: 3, den: 5}, hint: "Odejmij liczniki." },
+            { id: "4b", type: "frac", text: "Oblicz różnicę:", eq: "$6\\frac{8}{11} - 2\\frac{3}{11} =$", can: {int: 4, num: 5, den: 11}, hint: "Odejmij całości i odejmij ułamki." },
+            { id: "4c", type: "frac", text: "Oblicz różnicę:", eq: "$15\\frac{9}{10} - 7\\frac{9}{10} =$", can: {int: 8, num: 0, den: 0}, hint: "Ułamki się redukują do zera." },
+            { id: "4d", type: "frac", text: "Oblicz różnicę:", eq: "$8\\frac{13}{20} - 5 =$", can: {int: 3, num: 13, den: 20}, hint: "Odejmij tylko całości." },
+            { id: "4e", type: "frac", text: "Oblicz różnicę:", eq: "$10\\frac{5}{6} - 4\\frac{1}{6} =$", can: {int: 6, num: 4, den: 6}, altCan: {int: 6, num: 2, den: 3}, hint: "Odejmij części ułamkowe." },
+
+            // 5. Wyzwania
+            { id: "5a", type: "frac", text: "Oblicz:", eq: "$1 - \\frac{1}{2} - \\frac{1}{2} =$", can: {int: 0, num: 0, den: 0}, hint: "1 - 1/2 = 1/2. Potem 1/2 - 1/2 = 0." },
+            { id: "5b", type: "frac", text: "Oblicz:", eq: "$3\\frac{4}{7} + 2\\frac{3}{7} - 1 =$", can: {int: 5, num: 0, den: 0}, hint: "Najpierw dodaj: 3 4/7 + 2 3/7 = 6. Potem 6 - 1 = 5." },
+            { id: "5c", type: "frac", text: "Oblicz:", eq: "$10 - 2\\frac{1}{5} =$", can: {int: 7, num: 4, den: 5}, hint: "Zamień 10 na 9 5/5. Potem odejmij 2 1/5." },
+            { id: "5d", type: "frac", text: "Oblicz:", eq: "$(4\\frac{1}{8} + 2\\frac{7}{8}) - 3\\frac{5}{8} =$", can: {int: 3, num: 3, den: 8}, hint: "W nawiasie wyjdzie 7. Potem 7 - 3 5/8 = 6 8/8 - 3 5/8." },
+            { id: "5e", type: "frac", text: "Oblicz:", eq: "$1\\frac{2}{3} + 1\\frac{2}{3} + 1\\frac{2}{3} =$", can: {int: 5, num: 0, den: 0}, hint: "To 3 całości i 6/3. Ponieważ 6/3 = 2, wynik to 3 + 2 = 5." }
+        ];
+
+        const container = document.getElementById("tasks-container");
+
+        tasksData.forEach((task, index) => {
+            let taskNumber = index + 1; 
+            resultsData[task.id] = "Nie rozwiązano"; 
+            userAttemptsStructures[task.id] = [];
+            
+            let visualHTML = renderFractionEquationHTML(task.eq);
+            let taskContent = `
+                ${visualHTML}
+                <div class="input-group">
+                    <div class="inputContainerFrac" id="input_container_${task.id}">
+                        <input type="text" class="inputInt" id="input_${task.id}_int" placeholder="|?">
+                        <div class="inputFracBox">
+                            <input type="text" class="inputNum" id="input_${task.id}_num" placeholder="L">
+                            <div class="inputLine"></div>
+                            <input type="text" class="inputDen" id="input_${task.id}_den" placeholder="M">
                         </div>
                     </div>
-                `;
-            });
+                    <button onclick="checkAnswerFraction('${task.id}')">Sprawdź</button>
+                    <button class="btn-hint" onclick="document.getElementById('hint_${task.id}').style.display='block'">Podpowiedź</button>
+                    <button class="btn-answer" id="btn_answer_${task.id}" style="display: none;" onclick="showAnswerFraction('${task.id}')">Odpowiedź</button>
+                    <span id="feedback_${task.id}" class="feedback"></span>
+                </div>
+            `;
+
+            container.innerHTML += `
+                <div class="task-card" id="card_${task.id}">
+                    <div class="task-text">
+                        <strong>Zadanie ${taskNumber}.</strong> ${task.text}
+                    </div>
+                    ${taskContent}
+                    <div id="hint_${task.id}" class="hint-text">💡 <strong>Wskazówka:</strong> ${task.hint}</div>
+                </div>
+            `;
+        });
+
+        const valFromField = (id) => {
+            const v = document.getElementById(id).value.trim();
+            return v ? Number(v) : 0;
         }
 
-        function checkAnswer(id) {
-            const task = tasksData.find(t => t.id === id);
-            const userI = parseInt(document.getElementById(`in_${id}_i`).value) || 0;
-            const userN = parseInt(document.getElementById(`in_${id}_n`).value) || 0;
-            const userD = parseInt(document.getElementById(`in_${id}_d`).value) || 0;
+        function checkAnswerFraction(taskId) {
+            const task = tasksData.find(t => t.id === taskId);
+            const canonical = task.can;
+            const altCanonical = task.altCan || null;
+            const feedbackEl = document.getElementById(`feedback_${taskId}`);
+            const cardEl = document.getElementById(`card_${taskId}`);
+            const btnAnswer = document.getElementById(`btn_answer_${taskId}`);
             
-            const card = document.getElementById(`card_${id}`);
-            const fb = document.getElementById(`fb_${id}`);
+            const student = {
+                int: valFromField(`input_${taskId}_int`),
+                num: valFromField(`input_${taskId}_num`),
+                den: valFromField(`input_${taskId}_den`)
+            }
 
-            let isCorrect = (userI === task.can.int && userN === task.can.num);
-            if (isCorrect && task.can.num !== 0) isCorrect = (userD === task.can.den);
+            cardEl.classList.remove("correct-bg", "incorrect-bg");
 
-            card.classList.remove("correct-bg", "incorrect-bg");
-            if (isCorrect) {
-                fb.textContent = "Dobrze!"; fb.className = "feedback correct";
-                card.classList.add("correct-bg");
-                resultsData[id] = "Samodzielnie";
+            if (student.int === 0 && student.num === 0 && student.den === 0) {
+                // Specjalny przypadek dla zera
+                if (canonical.int !== 0 || canonical.num !== 0) {
+                    return (feedbackEl.textContent = "Wpisz odpowiedź!", feedbackEl.className = "feedback incorrect");
+                }
+            }
+
+            const check = (c) => {
+                let isCorr = (student.int === c.int && student.num === c.num);
+                if (isCorr && c.num !== 0) isCorr = (student.den === c.den);
+                return isCorr;
+            };
+
+            if (check(canonical) || (altCanonical && check(altCanonical))) {
+                feedbackEl.textContent = "Dobrze!"; 
+                feedbackEl.className = "feedback correct"; 
+                cardEl.classList.add("correct-bg");
+                btnAnswer.style.display = "none";
+                document.getElementById(`input_${taskId}_int`).disabled = true;
+                document.getElementById(`input_${taskId}_num`).disabled = true;
+                document.getElementById(`input_${taskId}_den`).disabled = true;
+                if(resultsData[taskId] !== "Podglądał odpowiedź") resultsData[taskId] = "Samodzielnie";
             } else {
-                fb.textContent = "Błąd!"; fb.className = "feedback incorrect";
-                card.classList.add("incorrect-bg");
-                document.getElementById(`ans_btn_${id}`).style.display = "inline";
+                const attemptsString = JSON.stringify(student);
+                if (!userAttemptsStructures[taskId].includes(attemptsString)) {
+                    userAttemptsStructures[taskId].push(attemptsString);
+                }
+                feedbackEl.textContent = "Błąd, spróbuj jeszcze raz!";
+                feedbackEl.className = "feedback incorrect"; 
+                cardEl.classList.add("incorrect-bg");
+                if (userAttemptsStructures[taskId].length >= 2) btnAnswer.style.display = "inline-block";
             }
         }
 
-        function showAnswer(id) {
-            const task = tasksData.find(t => t.id === id);
-            document.getElementById(`in_${id}_i`).value = task.can.int || (task.can.num === 0 ? task.can.int : "");
-            document.getElementById(`in_${id}_n`).value = task.can.num || "";
-            document.getElementById(`in_${id}_d`).value = task.can.num !== 0 ? task.can.den : "";
-            resultsData[id] = "Podgląd";
-            checkAnswer(id);
+        function showAnswerFraction(taskId) {
+            const canonical = tasksData.find(t => t.id === taskId).can;
+            document.getElementById(`card_${taskId}`).classList.remove("incorrect-bg");
+            document.getElementById(`card_${taskId}`).classList.add("correct-bg");
+            const intField = document.getElementById(`input_${taskId}_int`);
+            const numField = document.getElementById(`input_${taskId}_num`);
+            const denField = document.getElementById(`input_${taskId}_den`);
+            intField.value = canonical.int || (canonical.num === 0 ? "0" : ""); 
+            numField.value = canonical.num || ''; 
+            denField.value = canonical.num !== 0 ? canonical.den : ''; 
+            intField.disabled = true; numField.disabled = true; denField.disabled = true;
+            document.getElementById(`feedback_${taskId}`).innerHTML = "Oto prawidłowa odpowiedź!";
+            document.getElementById(`feedback_${taskId}`).className = "feedback correct";
+            document.getElementById(`btn_answer_${taskId}`).style.display = "none";
+            resultsData[taskId] = "Podglądał odpowiedź";
         }
 
         function sendResults() {
-            let report = `Uczeń: ${currentStudent}, Klasa: ${currentClass}\n\n`;
-            tasksData.forEach(t => report += `Zadanie ${t.id}: ${resultsData[t.id] || "Brak"}\n`);
+            let correctCount = 0; let hintCount = 0; let notSolvedCount = 0;
+            let detailedReport = "";
 
-            const btn = document.getElementById("btn-submit");
-            btn.disabled = true; btn.textContent = "Wysyłanie...";
+            tasksData.forEach((task, index) => {
+                let taskNumber = index + 1;
+                let answerDetails = "";
+                let wrongAttemptsString = (userAttemptsStructures[task.id].length > 0) ? `(Błędy: ${userAttemptsStructures[task.id].length})` : "";
+                
+                const curInt = document.getElementById(`input_${task.id}_int`).value.trim();
+                const curNum = document.getElementById(`input_${task.id}_num`).value.trim();
+                const curDen = document.getElementById(`input_${task.id}_den`).value.trim();
+                answerDetails = `${curInt} ${curNum}/${curDen}`.trim();
+
+                if(resultsData[task.id] === "Samodzielnie") {
+                    correctCount++;
+                    detailedReport += `Zadanie ${taskNumber}: Samodzielnie ${wrongAttemptsString} | Odp: ${answerDetails}\n`;
+                } else if(resultsData[task.id] === "Podglądał odpowiedź") {
+                    hintCount++;
+                    detailedReport += `Zadanie ${taskNumber}: Użył odpowiedzi ${wrongAttemptsString}\n`;
+                } else {
+                    notSolvedCount++;
+                    detailedReport += `Zadanie ${taskNumber}: Nie rozwiązano\n`;
+                }
+            });
+
+            const finalMessage = `Uczeń: ${currentStudent}\nKlasa: ${currentClass}\n\nWYNIKI:\n- Samodzielnie: ${correctCount} / ${tasksData.length}\n- Z podpowiedzią: ${hintCount}\n\nSZCZEGÓŁY:\n${detailedReport}`;
+
+            const btnSubmit = document.getElementById("btn-submit");
+            btnSubmit.textContent = "Wysyłanie...";
+            btnSubmit.disabled = true;
 
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
-                    access_key: "99356b6c-ab77-4ea0-a3cb-99560d40fafa",
-                    subject: `Wyniki: ${currentStudent} - ${currentClass}`,
-                    message: report
+                    access_key: "99356b6c-ab77-4ea0-a3cb-99560d40fafa", 
+                    subject: `Wyniki Testu Ułamki: ${currentStudent} (${currentClass})`,
+                    from_name: "Generator Testów",
+                    message: finalMessage
                 })
-            }).then(res => {
-                if(res.status === 200) {
-                    document.getElementById("finish-text").innerText = "Wyniki wysłane!";
-                    btn.style.display = "none";
+            })
+            .then(response => {
+                if (response.status == 200) {
+                    document.getElementById("finish-text").innerText = "Wyniki zostały wysłane!";
+                    btnSubmit.style.display = "none";
+                } else {
+                    alert("Wystąpił błąd podczas wysyłania.");
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = "Wyślij wyniki 📧";
                 }
             });
         }
