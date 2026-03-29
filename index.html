@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zestaw ćwiczeń: Ułamki zwykłe i liczby mieszane</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header-container {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h1 { margin: 0; font-size: 1.8em; }
+        .section-title {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .instructions {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            border-radius: 4px;
+        }
+        .task-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid #3498db;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .task-card.correct-bg { border-left-color: #27ae60; background-color: #f1fef6; }
+        .task-card.incorrect-bg { border-left-color: #e74c3c; background-color: #fff5f5; }
+        
+        /* Renderowanie ułamków */
+        .eqContainer { display: inline-flex; align-items: center; gap: 5px; font-size: 1.2em; flex-wrap: wrap; }
+        .fracComp { display: inline-flex; align-items: center; margin: 0 2px; }
+        .intPart { font-weight: bold; font-size: 1.1em; margin-right: 2px; }
+        .fracBox { display: flex; flex-direction: column; align-items: center; min-width: 25px; }
+        .numPart, .denPart { font-size: 0.85em; padding: 0 2px; }
+        .fracLine { width: 100%; height: 1.5px; background: #333; margin: 1px 0; }
+        .opBox { font-weight: bold; margin: 0 8px; }
+
+        /* Inputy */
+        .input-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .inputContainerFrac { display: inline-flex; align-items: center; gap: 5px; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
+        input { border: 2px solid #cbd5e1; text-align: center; border-radius: 5px; outline: none; }
+        .inputInt { width: 45px; height: 45px; font-size: 1.2em; }
+        .inputFracBox { display: flex; flex-direction: column; align-items: center; }
+        .inputNum, .inputDen { width: 40px; height: 30px; font-size: 1em; }
+        .inputLine { width: 45px; height: 2px; background: #333; margin: 3px 0; }
+
+        button {
+            background-color: #3498db; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background-color: #2980b9; }
+        .btn-answer { background-color: #9b59b6; display: none; }
+        
+        .feedback { font-weight: bold; margin-left: 10px; }
+        .correct { color: #27ae60; }
+        .incorrect { color: #e74c3c; }
+
+        #start-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; text-align: center; width: 350px; }
+        .modal-content input { width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; }
+        
+        #app-content { display: none; padding-bottom: 50px; }
+        .finish-container { text-align: center; margin-top: 40px; padding: 30px; background: white; border-radius: 12px; }
+    </style>
+</head>
+<body>
+
+    <div id="start-modal">
+        <div class="modal-content">
+            <h2>Witaj! 👋</h2>
+            <p>Wpisz swoje dane, aby zacząć:</p>
+            <input type="text" id="student-name" placeholder="Imię i Nazwisko">
+            <input type="text" id="student-class" placeholder="Klasa">
+            <button onclick="startTest()">Rozpocznij zadania</button>
+        </div>
+    </div>
+
+    <div id="app-content">
+        <div class="header-container">
+            <h1>Zestaw ćwiczeń: Ułamki zwykłe i liczby mieszane</h1>
+            <p>Rozwiąż wszystkie zadania. Pamiętaj o wyłączaniu całości!</p>
+        </div>
+
+        <div id="tasks-wrapper"></div>
+
+        <div class="finish-container">
+            <h2 id="finish-text">Gotowe? Wyślij wyniki do sprawdzenia.</h2>
+            <button style="background-color: #27ae60; padding: 15px 40px; font-size: 1.2em;" onclick="sendResults()" id="btn-submit">Wyślij wyniki 📧</button>
+        </div>
+    </div>
+
+    <script>
+        let studentData = { name: "", class: "" };
+        let results = {};
+
+        // BAZA DANYCH ZE SCRINÓW
+        const database = [
+            { section: "1. Dodawanie prostych ułamków i liczb mieszanych", tasks: [
+                { id: "1a", eq: "$\\frac{3}{10} + \\frac{6}{10}$", can: {i: 0, n: 9, d: 10} },
+                { id: "1b", eq: "$\\frac{8}{13} + \\frac{9}{13}$", can: {i: 1, n: 4, d: 13} },
+                { id: "1c", eq: "$4\\frac{2}{7} + 2\\frac{3}{7}$", can: {i: 6, n: 5, d: 7} },
+                { id: "1d", eq: "$1\\frac{5}{8} + 3\\frac{7}{8}$", can: {i: 5, n: 4, d: 8} }, // lub 5 1/2 po skróceniu, ale trzymamy się mianownika 8 dla prostoty
+                { id: "1e", eq: "$10\\frac{11}{12} + 5\\frac{5}{12}$", can: {i: 16, n: 4, d: 12} }
+            ]},
+            { section: "2. Sprytne dodawanie (Grupowanie składników)", tasks: [
+                { id: "2a", eq: "$3\\frac{2}{9} + 1\\frac{4}{5} + \\frac{7}{9}$", can: {i: 5, n: 4, d: 5} },
+                { id: "2b", eq: "$5\\frac{3}{7} + 2\\frac{1}{4} + \\frac{4}{7} + 1\\frac{3}{4}$", can: {i: 10, n: 0, d: 0} },
+                { id: "2c", eq: "$\\frac{5}{11} + 4\\frac{3}{8} + 1\\frac{6}{11} + 2\\frac{5}{8}$", can: {i: 9, n: 0, d: 0} },
+                { id: "2d", eq: "$8\\frac{1}{6} + 3\\frac{7}{10} + 1\\frac{5}{6} + \\frac{3}{10}$", can: {i: 14, n: 0, d: 0} },
+                { id: "2e", eq: "$2\\frac{4}{15} + 7\\frac{1}{3} + 1\\frac{11}{15} + 4\\frac{2}{3}$", can: {i: 16, n: 0, d: 0} }
+            ]},
+            { section: "3. Odejmowanie od liczby całkowitej", tasks: [
+                { id: "3a", eq: "$1 - \\frac{5}{9}$", can: {i: 0, n: 4, d: 9} },
+                { id: "3b", eq: "$2 - \\frac{3}{4}$", can: {i: 1, n: 1, d: 4} },
+                { id: "3c", eq: "$5 - \\frac{2}{7}$", can: {i: 4, n: 5, d: 7} },
+                { id: "3d", eq: "$12 - \\frac{7}{10}$", can: {i: 11, n: 3, d: 10} },
+                { id: "3e", eq: "$20 - \\frac{11}{15}$", can: {i: 19, n: 4, d: 15} }
+            ]},
+            { section: "4. Odejmowanie ułamków i liczb mieszanych", tasks: [
+                { id: "4a", eq: "$\\frac{24}{25} - \\frac{9}{25}$", can: {i: 0, n: 15, d: 25} },
+                { id: "4b", eq: "$6\\frac{8}{11} - 2\\frac{3}{11}$", can: {i: 4, n: 5, d: 11} },
+                { id: "4c", eq: "$15\\frac{9}{10} - 7\\frac{9}{10}$", can: {i: 8, n: 0, d: 0} },
+                { id: "4d", eq: "$8\\frac{13}{20} - 5$", can: {i: 3, n: 13, d: 20} },
+                { id: "4e", eq: "$10\\frac{5}{6} - 4\\frac{1}{6}$", can: {i: 6, n: 4, d: 6} }
+            ]},
+            { section: "5. Wyzwania (Mieszane operacje)", tasks: [
+                { id: "5a", eq: "$1 - \\frac{1}{2} - \\frac{1}{2}$", can: {i: 0, n: 0, d: 0} },
+                { id: "5b", eq: "$3\\frac{4}{7} + 2\\frac{3}{7} - 1$", can: {i: 5, n: 0, d: 0} },
+                { id: "5c", eq: "$10 - 2\\frac{1}{5}$", can: {i: 7, n: 4, d: 5} },
+                { id: "5d", eq: "$(4\\frac{1}{8} + 2\\frac{7}{8}) - 3\\frac{5}{8}$", can: {i: 3, n: 3, d: 8} },
+                { id: "5e", eq: "$1\\frac{2}{3} + 1\\frac{2}{3} + 1\\frac{2}{3}$", can: {i: 5, n: 0, d: 0} }
+            ]}
+        ];
+
+        function startTest() {
+            const n = document.getElementById("student-name").value;
+            const c = document.getElementById("student-class").value;
+            if(!n || !c) { alert("Wpisz imię i klasę!"); return; }
+            studentData = { name: n, class: c };
+            document.getElementById("start-modal").style.display = "none";
+            document.getElementById("app-content").style.display = "block";
+            renderTasks();
+        }
+
+        function renderFraction(latex) {
+            let text = latex.replace(/\$/g, '').replace(/\+/g, '<span class="opBox">+</span>').replace(/\-/g, '<span class="opBox">-</span>').replace(/\(/g, '<span class="opBox">(</span>').replace(/\)/g, '<span class="opBox">)</span>');
+            const pattern = /((\d+)\s*)?\\frac\{(\d+)\}\{(\d+)\}/g;
+            return text.replace(pattern, (m, p1, p2, p3, p4) => {
+                let int = p2 ? `<div class="intPart">${p2}</div>` : '';
+                return `<div class="fracComp">${int}<div class="fracBox"><div class="numPart">${p3}</div><div class="fracLine"></div><div class="denPart">${p4}</div></div></div>`;
+            });
+        }
+
+        function renderTasks() {
+            const wrapper = document.getElementById("tasks-wrapper");
+            database.forEach(sec => {
+                wrapper.innerHTML += `<div class="section-title">${sec.section}</div>`;
+                sec.tasks.forEach(t => {
+                    wrapper.innerHTML += `
+                        <div class="task-card" id="card_${t.id}">
+                            <div class="eqContainer"><strong>${t.id})</strong> ${renderFraction(t.eq)} <span class="opBox">=</span></div>
+                            <div class="input-group">
+                                <div class="inputContainerFrac">
+                                    <input type="number" class="inputInt" id="in_${t.id}_i" placeholder="cał.">
+                                    <div class="inputFracBox">
+                                        <input type="number" class="inputNum" id="in_${t.id}_n" placeholder="licz.">
+                                        <div class="inputLine"></div>
+                                        <input type="number" class="inputDen" id="in_${t.id}_d" placeholder="mian.">
+                                    </div>
+                                </div>
+                                <button onclick="check('${t.id}')">Sprawdź</button>
+                                <button class="btn-answer" id="ans_${t.id}" onclick="showAns('${t.id}')">Pokaż wynik</button>
+                                <span id="fee_${t.id}" class="feedback"></span>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        function check(id) {
+            let task;
+            database.forEach(s => { let find = s.tasks.find(x => x.id === id); if(find) task = find; });
+            
+            const ui = {
+                i: parseInt(document.getElementById(`in_${id}_i`).value) || 0,
+                n: parseInt(document.getElementById(`in_${id}_n`).value) || 0,
+                d: parseInt(document.getElementById(`in_${id}_d`).value) || 0
+            };
+
+            const isCorrect = (ui.i === task.can.i && ui.n === task.can.n && (task.can.n === 0 || ui.d === task.can.d));
+            const fee = document.getElementById(`fee_${id}`);
+            const card = document.getElementById(`card_${id}`);
+
+            if(isCorrect) {
+                fee.innerHTML = "Dobrze!"; fee.className = "feedback correct";
+                card.className = "task-card correct-bg";
+                results[id] = "OK";
+            } else {
+                fee.innerHTML = "Spróbuj jeszcze raz"; fee.className = "feedback incorrect";
+                card.className = "task-card incorrect-bg";
+                document.getElementById(`ans_${id}`).style.display = "inline-block";
+                results[id] = "Błąd";
+            }
+        }
+
+        function showAns(id) {
+            let task;
+            database.forEach(s => { let find = s.tasks.find(x => x.id === id); if(find) task = find; });
+            document.getElementById(`in_${id}_i`).value = task.can.i;
+            document.getElementById(`in_${id}_n`).value = task.can.n;
+            document.getElementById(`in_${id}_d`).value = task.can.d || "";
+            results[id] = "Podgląd";
+            check(id);
+        }
+
+        function sendResults() {
+            const btn = document.getElementById("btn-submit");
+            btn.innerText = "Wysyłanie..."; btn.disabled = true;
+            
+            let msg = `Uczeń: ${studentData.name}, Klasa: ${studentData.class}\n\nWyniki:\n`;
+            Object.keys(results).forEach(k => msg += `${k}: ${results[k]}\n`);
+
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    access_key: "TWÓJ-KLUCZ-WEB3FORMS", // Wstaw tutaj klucz z web3forms.com, aby otrzymywać maile
+                    subject: `Wyniki Ułamki: ${studentData.name}`,
+                    message: msg
+                })
+            }).then(() => {
+                document.getElementById("finish-text").innerText = "Wysłano pomyślnie! Dziękuję.";
+                btn.style.display = "none";
+            });
+        }
+    </script>
+</body>
+</html>
